@@ -137,7 +137,6 @@ try {
     $r += 1
     Set-Titulo $wsRes "A$r" "Repeticiones completadas por prueba (cada repetición ordena un lote de copias)"
     $r++
-    $filaRep = $r
     Set-Valor ($wsRes.Cells.Item($r, 1)) ("Tamaño")
     Set-Valor ($wsRes.Cells.Item($r, 8)) ("Lote")
     for ($c = 0; $c -lt 6; $c++) { Set-Valor ($wsRes.Cells.Item($r, $c + 2)) ($algoritmos[$c]) }

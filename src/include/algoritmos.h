@@ -12,7 +12,7 @@
 
 using FuncionSort = void (*)(std::vector<int>&);
 
-class Algortimos {
+class Algoritmos {
 public:
     // ----- Algoritmos O(n^2) -----
     static void insertionSort(std::vector<int>& arr);
