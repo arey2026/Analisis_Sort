@@ -127,7 +127,8 @@ try {
     $r = $ultimaFila + 2
     Set-Valor ($wsRes.Cells.Item($r, 1)) ("Valores: tiempo PROMEDIO por ordenamiento, en milisegundos (ms), de las ejecuciones completadas.")
     Set-Valor ($wsRes.Cells.Item($r + 1, 1)) ("Verde = algoritmo más rápido en ese tamaño.")
-    $r += 3
+    Set-Valor ($wsRes.Cells.Item($r + 2, 1)) ("Los O(n log n) se repitieron 5 veces en todos los tamaños. Los O(n²) se repitieron 5 veces hasta n = 100,000, y menos en los tamaños mayores porque cada ejecución tarda varios minutos (ver tabla de repeticiones).")
+    $r += 4
     Set-Titulo $wsRes "A$r" "Estado de las pruebas"
     $r++
     if ($notas.Count -eq 0) { Set-Valor ($wsRes.Cells.Item($r, 1)) ("Todas las pruebas ($($filas.Count)) se ejecutaron y completaron; ninguna se omitió."); $r++ }

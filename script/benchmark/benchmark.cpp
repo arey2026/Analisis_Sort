@@ -39,9 +39,18 @@ const int VALOR_MAXIMO = 10000000;
 const int REPETICIONES = 5;                  // repeticiones por prueba (se promedian)
 const long long ELEMENTOS_POR_LOTE = 100000; // ver explicación de "lote" más abajo
 
-// 5 tamaños, cada uno mayor que el anterior. El mayor (100,000) es el
-// límite práctico para los O(n^2): Bubble Sort tarda ~15-20 s por ejecución.
-const std::vector<int> TAMANOS = {1000, 5000, 10000, 50000, 100000};
+// 5 tamaños, cada uno mayor que el anterior, hasta un millón.
+const std::vector<int> TAMANOS = {1000, 10000, 100000, 500000, 1000000};
+
+// Los algoritmos O(n^2) tardan muchísimo en los tamaños grandes
+// (Bubble Sort con n = 1,000,000 tarda ~25-30 minutos POR EJECUCIÓN).
+// Para que el benchmark termine en un tiempo razonable, en esos tamaños
+// hacen menos repeticiones. Los O(n log n) siempre hacen REPETICIONES.
+int repeticionesPara(bool esCuadratico, int n) {
+    if (!esCuadratico || n <= 100000) return REPETICIONES;
+    if (n <= 500000) return 2;
+    return 1;
+}
 
 const std::string RUTA_CSV = "results/resultados_sort.csv";
 const std::string RUTA_CONFIG = "results/config_benchmark.csv";
@@ -50,6 +59,7 @@ const std::string RUTA_CONFIG = "results/config_benchmark.csv";
 struct Algoritmo {
     std::string nombre;
     FuncionSort funcion;
+    bool esCuadratico;   // true = O(n^2), false = O(n log n)
 };
 
 struct Resultado {
@@ -92,17 +102,19 @@ int main(int argc, char* argv[]) {
     }
 
     const std::vector<Algoritmo> algoritmos = {
-        {"Bubble Sort",    Algoritmos::bubbleSort},    // O(n^2)
-        {"Insertion Sort", Algoritmos::insertionSort}, // O(n^2)
-        {"Selection Sort", Algoritmos::selectionSort}, // O(n^2)
-        {"Merge Sort",     Algoritmos::mergeSort},     // O(n log n)
-        {"Heap Sort",      Algoritmos::heapSort},      // O(n log n)
-        {"Quick Sort",     Algoritmos::quickSort},     // O(n log n)
+        {"Bubble Sort",    Algoritmos::bubbleSort,    true},  // O(n^2)
+        {"Insertion Sort", Algoritmos::insertionSort, true},  // O(n^2)
+        {"Selection Sort", Algoritmos::selectionSort, true},  // O(n^2)
+        {"Merge Sort",     Algoritmos::mergeSort,     false}, // O(n log n)
+        {"Heap Sort",      Algoritmos::heapSort,      false}, // O(n log n)
+        {"Quick Sort",     Algoritmos::quickSort,     false}, // O(n log n)
     };
 
     std::cout << "=== Benchmark de algoritmos de ordenamiento ===" << std::endl;
-    std::cout << "Semilla: " << SEMILLA << " | Repeticiones: " << REPETICIONES
-              << " | Tamanos: " << TAMANOS.size() << std::endl << std::endl;
+    std::cout << "Semilla: " << SEMILLA << " | Repeticiones: hasta " << REPETICIONES
+              << " | Tamanos: " << TAMANOS.size() << std::endl;
+    std::cout << "AVISO: con n = 1,000,000 los algoritmos O(n^2) tardan muchos minutos. Duracion total estimada: ~80 min."
+              << std::endl << std::endl;
 
     std::vector<Resultado> resultados;
     std::cout << std::fixed << std::setprecision(4);
@@ -120,8 +132,11 @@ int main(int argc, char* argv[]) {
 
         for (const Algoritmo& a : algoritmos) {
             double sumaMs = 0.0, minMs = 1e300, maxMs = 0.0;
+            const int repeticiones = repeticionesPara(a.esCuadratico, n);
 
-            for (int rep = 0; rep < REPETICIONES; rep++) {
+            std::cout << "  " << std::left << std::setw(15) << a.nombre << std::flush; // progreso visible
+
+            for (int rep = 0; rep < repeticiones; rep++) {
                 // Copias para este lote (FUERA del cronómetro).
                 std::vector<std::vector<int>> copias(lote, original);
 
@@ -145,11 +160,11 @@ int main(int argc, char* argv[]) {
                 maxMs = std::max(maxMs, msPorSort);
             }
 
-            Resultado r{n, a.nombre, sumaMs / REPETICIONES, minMs, maxMs, REPETICIONES, lote};
+            Resultado r{n, a.nombre, sumaMs / repeticiones, minMs, maxMs, repeticiones, lote};
             resultados.push_back(r);
 
-            std::cout << "  " << std::left << std::setw(15) << a.nombre << std::right << std::setw(14)
-                      << r.promedioMs << " ms  (" << REPETICIONES << " rep.)" << std::endl;
+            std::cout << std::right << std::setw(14) << r.promedioMs << " ms  ("
+                      << repeticiones << " rep.)" << std::endl;
         }
     }
 
@@ -172,7 +187,8 @@ int main(int argc, char* argv[]) {
     config << "Clave,Valor\n";
     config << "Semilla," << SEMILLA << "\n";
     config << "Rango de valores,[" << VALOR_MINIMO << " - " << VALOR_MAXIMO << "]\n";
-    config << "Repeticiones por prueba," << REPETICIONES << "\n";
+    config << "Repeticiones O(n log n)," << REPETICIONES << " en todos los tamanos\n";
+    config << "Repeticiones O(n^2)," << REPETICIONES << " hasta n = 100000; 2 en n = 500000; 1 en n = 1000000\n";
     config << "Elementos por lote," << ELEMENTOS_POR_LOTE << "\n";
     config << "Compilador,GCC " << __VERSION__ << "\n";
 #ifdef __OPTIMIZE__
