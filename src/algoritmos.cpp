@@ -5,7 +5,7 @@
 #include <utility> 
 
 
-void Algortimos::insertionSort(std::vector<int>& arr) {
+void Algoritmos::insertionSort(std::vector<int>& arr) {
     const int n = static_cast<int>(arr.size());
 
     for (int i = 1; i < n; i++) {
@@ -20,7 +20,7 @@ void Algortimos::insertionSort(std::vector<int>& arr) {
     }
 }
 
-void Algortimos::selectionSort(std::vector<int>& arr) {
+void Algoritmos::selectionSort(std::vector<int>& arr) {
     const int n = static_cast<int>(arr.size());
 
     for (int i = 0; i < n - 1; i++) {
@@ -38,7 +38,7 @@ void Algortimos::selectionSort(std::vector<int>& arr) {
     }
 }
 
-void Algortimos::bubbleSort(std::vector<int>& arr) {
+void Algoritmos::bubbleSort(std::vector<int>& arr) {
     const int n = static_cast<int>(arr.size());
 
     for (int pasada = 0; pasada < n - 1; pasada++) {
@@ -58,7 +58,7 @@ void Algortimos::bubbleSort(std::vector<int>& arr) {
     }
 }
 
-void Algortimos::mergeSort(std::vector<int>& arr) {
+void Algoritmos::mergeSort(std::vector<int>& arr) {
     if (arr.size() < 2) return;
 
     // Creamos el arreglo auxiliar UNA sola vez (en vez de uno por cada
@@ -67,7 +67,7 @@ void Algortimos::mergeSort(std::vector<int>& arr) {
     mergeSortRecursivo(arr, aux, 0, static_cast<int>(arr.size()) - 1);
 }
 
-void Algortimos::mergeSortRecursivo(std::vector<int>& arr, std::vector<int>& aux,
+void Algoritmos::mergeSortRecursivo(std::vector<int>& arr, std::vector<int>& aux,
                                            int izq, int der) {
     if (izq >= der) return; // 0 o 1 elemento: caso base
 
@@ -77,7 +77,7 @@ void Algortimos::mergeSortRecursivo(std::vector<int>& arr, std::vector<int>& aux
     mezclar(arr, aux, izq, medio, der);           
 }
 
-void Algortimos::mezclar(std::vector<int>& arr, std::vector<int>& aux,
+void Algoritmos::mezclar(std::vector<int>& arr, std::vector<int>& aux,
                                 int izq, int medio, int der) {
     // Copiamos el tramo al arreglo auxiliar.
     for (int k = izq; k <= der; k++) {
@@ -101,7 +101,7 @@ void Algortimos::mezclar(std::vector<int>& arr, std::vector<int>& aux,
     }
 }
 
-void Algortimos::heapSort(std::vector<int>& arr) {
+void Algoritmos::heapSort(std::vector<int>& arr) {
     const int n = static_cast<int>(arr.size());
 
     for (int i = n / 2 - 1; i >= 0; i--) {
@@ -114,7 +114,7 @@ void Algortimos::heapSort(std::vector<int>& arr) {
     }
 }
 
-void Algortimos::hundir(std::vector<int>& arr, int n, int i) {
+void Algoritmos::hundir(std::vector<int>& arr, int n, int i) {
     while (true) {
         int mayor = i;
         int izq = 2 * i + 1;
@@ -133,12 +133,12 @@ void Algortimos::hundir(std::vector<int>& arr, int n, int i) {
 }
 
 
-void Algortimos::quickSort(std::vector<int>& arr) {
+void Algoritmos::quickSort(std::vector<int>& arr) {
     if (arr.size() < 2) return;
     quickSortRecursivo(arr, 0, static_cast<int>(arr.size()) - 1);
 }
 
-void Algortimos::quickSortRecursivo(std::vector<int>& arr, int izq, int der) {
+void Algoritmos::quickSortRecursivo(std::vector<int>& arr, int izq, int der) {
     if (izq >= der) return; // 0 o 1 elemento: caso base
 
     int p = particion(arr, izq, der);
@@ -146,7 +146,7 @@ void Algortimos::quickSortRecursivo(std::vector<int>& arr, int izq, int der) {
     quickSortRecursivo(arr, p + 1, der); 
 }
 
-int Algortimos::particion(std::vector<int>& arr, int izq, int der) {
+int Algoritmos::particion(std::vector<int>& arr, int izq, int der) {
     int pivote = arr[izq + (der - izq) / 2];
     int i = izq - 1;
     int j = der + 1;

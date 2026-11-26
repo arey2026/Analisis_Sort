@@ -15,12 +15,12 @@ struct Algoritmo {
 
 // Lista de los seis algoritmos a probar (todos los sort).
 const std::vector<Algoritmo> ALGORITMOS = {
-    {"Insertion Sort", Algortimos::insertionSort},
-    {"Selection Sort", Algortimos::selectionSort},
-    {"Bubble Sort",    Algortimos::bubbleSort},
-    {"Merge Sort",     Algortimos::mergeSort},
-    {"Heap Sort",      Algortimos::heapSort},
-    {"Quick Sort",     Algortimos::quickSort},
+    {"Insertion Sort", Algoritmos::insertionSort},
+    {"Selection Sort", Algoritmos::selectionSort},
+    {"Bubble Sort",    Algoritmos::bubbleSort},
+    {"Merge Sort",     Algoritmos::mergeSort},
+    {"Heap Sort",      Algoritmos::heapSort},
+    {"Quick Sort",     Algoritmos::quickSort},
 };
 
 // Un caso de prueba: una descripción y el arreglo de entrada.
