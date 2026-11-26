@@ -1,10 +1,10 @@
-# Crea results/resultados_sort.xlsx a partir de los CSV que genera
-# benchmark.exe, usando Microsoft Excel
+﻿# Crea results/resultados_sort.xlsx a partir de los CSV que genera
+# benchmark.exe, usando Microsoft Excel.
+# Se ejecuta solo al final de benchmark.exe, o a mano (desde la raiz):
+#     powershell -ExecutionPolicy Bypass -File script\generar_excel.ps1
 #
 # Hojas: Resultados, Analisis, Complejidad, Graficos, Equipo.
 # Los graficos tambien se exportan como PNG a results/graficos/.
-# NUNCA se inventan tiempos: una prueba OMITIDA aparece como "Omitido"
-# en las tablas y como #N/A (punto vacio) en los graficos.
 # ---------------------------------------------------------------
 $ErrorActionPreference = "Stop"
 
@@ -126,11 +126,11 @@ try {
 
     $r = $ultimaFila + 2
     Set-Valor ($wsRes.Cells.Item($r, 1)) ("Valores: tiempo PROMEDIO por ordenamiento, en milisegundos (ms), de las ejecuciones completadas.")
-    Set-Valor ($wsRes.Cells.Item($r + 1, 1)) ("Verde = más rápido del tamaño.  Gris = Omitido (no se ejecutó, no tiene tiempo).  Naranja = terminó pero superó el límite de tiempo.")
+    Set-Valor ($wsRes.Cells.Item($r + 1, 1)) ("Verde = algoritmo más rápido en ese tamaño.")
     $r += 3
-    Set-Titulo $wsRes "A$r" "Notas sobre pruebas omitidas o que superaron el límite"
+    Set-Titulo $wsRes "A$r" "Estado de las pruebas"
     $r++
-    if ($notas.Count -eq 0) { Set-Valor ($wsRes.Cells.Item($r, 1)) ("Todas las pruebas se completaron."); $r++ }
+    if ($notas.Count -eq 0) { Set-Valor ($wsRes.Cells.Item($r, 1)) ("Todas las pruebas ($($filas.Count)) se ejecutaron y completaron; ninguna se omitió."); $r++ }
     foreach ($nota in $notas) { Set-Valor ($wsRes.Cells.Item($r, 1)) ($nota); $r++ }
 
     # Tabla de repeticiones ejecutadas
@@ -177,7 +177,7 @@ try {
         $wsAna.Cells.Item($fa, 6).NumberFormat = "#,##0.0""x"""
     }
     $r = $tamanos.Count + 3
-    Set-Valor ($wsAna.Cells.Item($r, 1)) ("La columna 'Más lento' solo considera las pruebas completadas; las omitidas habrían sido aún más lentas.")
+    Set-Valor ($wsAna.Cells.Item($r, 1)) ("La columna 'Diferencia' indica cuántas veces más tardó el más lento que el más rápido en el mismo tamaño.")
 
     # --- 2. Comparacion relativa ---
     $r += 2
@@ -218,7 +218,7 @@ try {
         $wsAna.Range("D${r}:E${r}").NumberFormat = "#,##0.000000"
     }
     $r++
-    Set-Valor ($wsAna.Cells.Item($r, 1)) ("La columna D compara a los seis con los mismos tamaños (los que todos completaron). La columna E no es comparable entre algoritmos, porque cada uno completó tamaños distintos.")
+    Set-Valor ($wsAna.Cells.Item($r, 1)) ("Los seis algoritmos se midieron con los mismos tamaños, así que los promedios son comparables entre sí. El promedio está dominado por el tamaño más grande.")
 
     # --- 4. Diferencias de rendimiento: crecimiento observado vs teorico ---
     $r += 2
@@ -279,9 +279,9 @@ try {
             $obs += "{0}: al pasar de n = {1:N0} a n = {2:N0} el tiempo se multiplicó por {3:N2}; la teoría O(n²) predice {4:N2}." -f $a, $n1, $n2, ((Get-Tiempo $n2 $a) / (Get-Tiempo $n1 $a)), [math]::Pow($n2 / $n1, 2)
         }
     }
-    $omitidas = @($filas | Where-Object { $_.Estado -eq "OMITIDO" }).Count
-    $obs += "Se omitieron $omitidas de $($filas.Count) pruebas porque su tiempo estimado superaba el límite configurado; esas celdas no tienen tiempo (no se inventaron valores)."
-    $obs += "En tamaños muy pequeños (n = 10 y 100) los tiempos son de microsegundos; las diferencias entre algoritmos son mínimas y están más influidas por detalles de implementación y del procesador que por la complejidad."
+    $obs += "Se ejecutaron las $($filas.Count) pruebas (6 algoritmos x $($tamanos.Count) tamaños); ninguna se omitió y todos los tiempos son medidos."
+    $nMin = $tamanos[0]
+    $obs += "En el tamaño más pequeño (n = {0:N0}) todos tardan menos de unos pocos milisegundos; ahí las diferencias dependen más de detalles de implementación y del procesador que de la complejidad. Al crecer n, la diferencia entre O(n²) y O(n log n) se vuelve enorme." -f $nMin
 
     foreach ($o in $obs) { $r++; Set-Valor ($wsAna.Cells.Item($r, 1)) ("• $o") }
 
@@ -314,7 +314,7 @@ try {
     # =========================================================
     # HOJA 4: GRAFICOS
     # =========================================================
-    Set-Titulo $wsGraf "A1" "Datos de los gráficos (ms). #N/A = prueba omitida (el gráfico no dibuja ese punto)."
+    Set-Titulo $wsGraf "A1" "Datos de los gráficos: tiempo promedio en milisegundos (ms)."
     Set-Valor ($wsGraf.Cells.Item(2, 1)) ("Tamaño")
     for ($c = 0; $c -lt 6; $c++) { Set-Valor ($wsGraf.Cells.Item(2, $c + 2)) ($algoritmos[$c]) }
     Set-Encabezado $wsGraf "A2:G2"
@@ -351,7 +351,11 @@ try {
         $ch.Axes(1).AxisTitle.Text = "Tamaño del arreglo (n)" + $(if ($logX) { " - escala logarítmica" } else { "" })
         $ch.Axes(2).HasTitle = $true
         $ch.Axes(2).AxisTitle.Text = "Tiempo (ms)" + $(if ($logY) { " - escala logarítmica" } else { "" })
-        if ($logX) { $ch.Axes(1).ScaleType = -4133 }   # xlScaleLogarithmic
+        if ($logX) {
+            $ch.Axes(1).ScaleType = -4133   # xlScaleLogarithmic
+            # El eje empieza en la potencia de 10 del tamano mas pequeno (no en 1).
+            $ch.Axes(1).MinimumScale = [math]::Pow(10, [math]::Floor([math]::Log10($tamanos[0])))
+        }
         if ($logY) { $ch.Axes(2).ScaleType = -4133 }
     }
 
@@ -360,7 +364,7 @@ try {
     $top += 400
     New-GraficoLineas ("O(n²) vs O(n log n) hasta n = {0:N0} (escala lineal)" -f $nComun) $algoritmos $filaComunGraf $false $false $top "2_cuadraticos_vs_nlogn_lineal.png"
     $top += 400
-    New-GraficoLineas "Algoritmos O(n log n) hasta n = 1,000,000 (escala lineal)" $nlogn $ultimaFilaGraf $false $false $top "3_nlogn_lineal.png"
+    New-GraficoLineas ("Algoritmos O(n log n) hasta n = {0:N0} (escala lineal)" -f $nMax) $nlogn $ultimaFilaGraf $false $false $top "3_nlogn_lineal.png"
     $top += 400
 
     # Grafico de barras: los seis en el mayor tamaño común

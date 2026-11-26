@@ -1,15 +1,17 @@
-// sorting_algorithms.h
+// algoritmos.h
 // ---------------------------------------------------------------
 // Declaración de la clase Algoritmos, que reúne los SEIS
-// algoritmos de ordenamiento del proyecto ya implementados en algoritmos.cpp
+// algoritmos de ordenamiento del proyecto (implementados en src/algoritmos.cpp).
 // Todos los algoritmos reciben el arreglo POR REFERENCIA
 // (std::vector<int>&) y lo ordenan de menor a mayor en el mismo arreglo.
 // ---------------------------------------------------------------
-#ifndef SORTING_ALGORITHMS_H
-#define SORTING_ALGORITHMS_H
+#ifndef ALGORITMOS_H
+#define ALGORITMOS_H
 
 #include <vector>
 
+// Puntero a función de ordenamiento: permite guardar los seis algoritmos
+// en una lista y recorrerlos en las pruebas y en el benchmark.
 using FuncionSort = void (*)(std::vector<int>&);
 
 class Algoritmos {
@@ -24,6 +26,8 @@ public:
     static void heapSort(std::vector<int>& arr);
     static void quickSort(std::vector<int>& arr);
 
+private:
+    // Funciones de apoyo internas (solo las usan los algoritmos de arriba).
 
     // Merge Sort
     static void mergeSortRecursivo(std::vector<int>& arr, std::vector<int>& aux, int izq, int der);
@@ -37,9 +41,12 @@ public:
     static int particion(std::vector<int>& arr, int izq, int der);
 };
 
+// ===== Funciones auxiliares (src/utils.cpp) =====
 
+// Devuelve true si el arreglo está ordenado de menor a mayor.
 bool estaOrdenado(const std::vector<int>& arr);
 
+// Imprime el arreglo en consola, por ejemplo: [5, 2, 9]
 void imprimirArreglo(const std::vector<int>& arr);
 
-#endif // SORTING_ALGORITHMS_H
+#endif // ALGORITMOS_H

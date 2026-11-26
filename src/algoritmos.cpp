@@ -1,3 +1,5 @@
+// algoritmos.cpp
+// Implementación de los seis algoritmos de la clase Algoritmos.
 // Ninguno usa std::sort ni otra función de ordenamiento de la biblioteca:
 // todo está implementado a mano. Solo usamos std::swap para intercambiar.
 // ---------------------------------------------------------------
