@@ -1,7 +1,8 @@
 Clave,Valor
 Semilla,2026
 Rango de valores,[0 - 10000000]
-Repeticiones por prueba,5
+Repeticiones O(n log n),5 en todos los tamanos
+Repeticiones O(n^2),5 hasta n = 100000; 2 en n = 500000; 1 en n = 1000000
 Elementos por lote,100000
 Compilador,GCC 11.2.0
 Optimizacion,Activada (-O2)
