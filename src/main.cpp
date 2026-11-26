@@ -1,4 +1,4 @@
-#include "sorting_algorithms.h"
+#include "algoritmos.h"
 #include <iostream>
 #include <string>
 
@@ -11,12 +11,12 @@ int main() {
     const std::vector<int> ejemplo = {29, 10, 14, 37, 13, 5, 88, 1, 14, -7};
 
     const std::vector<Algoritmo> algoritmos = {
-        {"Insertion Sort", SortingAlgorithms::insertionSort},
-        {"Selection Sort", SortingAlgorithms::selectionSort},
-        {"Bubble Sort   ", SortingAlgorithms::bubbleSort},
-        {"Merge Sort    ", SortingAlgorithms::mergeSort},
-        {"Heap Sort     ", SortingAlgorithms::heapSort},
-        {"Quick Sort    ", SortingAlgorithms::quickSort},
+        {"Bubble Sort   ", Algortimos::bubbleSort},
+        {"Insertion Sort", Algortimos::insertionSort},
+        {"Selection Sort", Algortimos::selectionSort},
+        {"Merge Sort    ", Algortimos::mergeSort},
+        {"Heap Sort     ", Algortimos::heapSort},
+        {"Quick Sort    ", Algortimos::quickSort},
     };
 
     std::cout << "=== Tarea 3: Analisis de Algoritmos de Sort ===" << std::endl;

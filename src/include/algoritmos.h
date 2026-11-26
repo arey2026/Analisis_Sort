@@ -1,17 +1,18 @@
 // sorting_algorithms.h
 // ---------------------------------------------------------------
-// Declaración de la clase SortingAlgorithms, que reúne los SEIS
-// algoritmos de ordenamiento del proyecto implementados
+// Declaración de la clase Algoritmos, que reúne los SEIS
+// algoritmos de ordenamiento del proyecto ya implementados en algoritmos.cpp
 // Todos los algoritmos reciben el arreglo POR REFERENCIA
 // (std::vector<int>&) y lo ordenan de menor a mayor en el mismo arreglo.
 // ---------------------------------------------------------------
-
+#ifndef SORTING_ALGORITHMS_H
+#define SORTING_ALGORITHMS_H
 
 #include <vector>
 
 using FuncionSort = void (*)(std::vector<int>&);
 
-class SortingAlgorithms {
+class Algortimos {
 public:
     // ----- Algoritmos O(n^2) -----
     static void insertionSort(std::vector<int>& arr);
